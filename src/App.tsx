@@ -48,7 +48,7 @@ export default function App() {
         }}
       >
         <ChatBox messages={messages} />
-        <Box mt="auto">
+        <Box mt="auto" p={2}>
           <ChatInput onSend={handleSendMessage} />
         </Box>
       </Paper>

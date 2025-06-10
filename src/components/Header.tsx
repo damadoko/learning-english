@@ -14,12 +14,12 @@ export const Header: React.FC<HeaderProps> = ({ user, onLogin }) => {
   };
 
   return (
-    <Box display="flex" justifyContent="space-between" mb={2}>
+    <Box display="flex" justifyContent="space-between" padding={2}>
       <Typography variant="h6">Learn English with AI</Typography>
       {user ? (
         <Typography variant="body1">👤 {user.name}</Typography>
       ) : (
-        <Button onClick={handleLogin}>Login</Button>
+        <Button variant="outlined" onClick={handleLogin}>Login</Button>
       )}
     </Box>
   );
