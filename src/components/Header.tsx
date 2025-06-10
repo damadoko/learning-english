@@ -1,12 +1,9 @@
 import { Box, Button, Typography } from "@mui/material";
 
-export type User = {
-  id: number;
-  name: string;
-};
+import type { User } from "../types";
 
 export type HeaderProps = {
-  user: User;
+  user: User | null;
   onLogin: (user: User) => void;
 };
 

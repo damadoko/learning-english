@@ -1,35 +1,57 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from "react";
+import { Container, Paper, Box } from "@mui/material";
+import { Header } from "./components/Header";
+import { ChatBox } from "./components/ChatBox";
+import { ChatInput } from "./components/ChatInput";
+import type { Message, User } from "./types";
+import "./App.css";
 
-function App() {
-  const [count, setCount] = useState(0)
+export default function App() {
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [user, setUser] = useState<User | null>(null);
+
+  const handleSendMessage = async (text: string) => {
+    const userMsg = { role: "user", content: text } as const;
+    setMessages((prev) => [...prev, userMsg]);
+
+    const res = await fetch("/api/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: text, userId: user?.id ?? null }),
+    });
+    const data = await res.json();
+
+    setMessages((prev) => [
+      ...prev,
+      { role: "assistant", content: data.reply } as const,
+    ]);
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <Box
+      sx={{
+        width: "100vw",
+        height: "100vh",
+        display: 'flex',
+        flexDirection: "column",
+      }}
+    >
+      <Header user={user} onLogin={setUser} />
+      <Paper
+        elevation={3}
+        sx={{
+          height: "85vh",
+          width: "100%",
+          margin: "0 auto",
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
+        <ChatBox messages={messages} />
+        <Box mt="auto">
+          <ChatInput onSend={handleSendMessage} />
+        </Box>
+      </Paper>
+    </Box>
+  );
 }
-
-export default App

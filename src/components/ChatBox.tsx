@@ -1,9 +1,7 @@
 import { Box, Typography } from "@mui/material";
 
-export type Message = {
-  role: "user" | "anonymous";
-  content: string;
-};
+import type { Message } from "../types";
+
 export type ChatBoxProps = {
   messages: Message[];
 };
