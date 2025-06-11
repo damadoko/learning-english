@@ -1,26 +1,36 @@
-import { Box, Button, Typography } from "@mui/material";
-
-import type { User } from "../types";
+import {
+  Box,
+  Button,
+  Typography,
+  Avatar,
+  AppBar,
+  Toolbar,
+} from "@mui/material";
 
 export type HeaderProps = {
-  user: User | null;
-  onLogin: (user: User) => void;
+  userEmail?: string;
+  loginHandler: () => void;
 };
 
-export const Header: React.FC<HeaderProps> = ({ user, onLogin }) => {
-  const handleLogin = () => {
-    const mockUser = { id: 1, name: "John Doe" };
-    onLogin(mockUser);
-  };
-
+export const Header: React.FC<HeaderProps> = ({ userEmail, loginHandler }) => {
   return (
-    <Box display="flex" justifyContent="space-between" padding={2}>
-      <Typography variant="h6">Learn English with AI</Typography>
-      {user ? (
-        <Typography variant="body1">👤 {user.name}</Typography>
-      ) : (
-        <Button variant="outlined" onClick={handleLogin}>Login</Button>
-      )}
-    </Box>
+    <AppBar position="static">
+      <Toolbar>
+        <Typography variant="h6" sx={{flexGrow: 1}}>Learn English with AI</Typography>
+
+        {userEmail ? (
+          <Box display="flex" alignItems="center" gap={1}>
+            <Typography variant="body1">
+              Hello, {userEmail.split("@")[0]}
+            </Typography>
+            <Avatar>{userEmail[0].toUpperCase()}</Avatar>
+          </Box>
+        ) : (
+          <Button variant="outlined" color="inherit" onClick={loginHandler}>
+            Login
+          </Button>
+        )}
+      </Toolbar>
+    </AppBar>
   );
 };

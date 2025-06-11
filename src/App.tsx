@@ -5,10 +5,13 @@ import { ChatBox } from "./components/ChatBox";
 import { ChatInput } from "./components/ChatInput";
 import type { Message, User } from "./types";
 import "./App.css";
+import { LoginModal } from "./components/LoginModal";
 
 export default function App() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [user, setUser] = useState<User | null>(null);
+  const [showLogin, setShowLogin] = useState<boolean>(false);
+  console.log(user)
 
   const handleSendMessage = async (text: string) => {
     const userMsg = { role: "user", content: text } as const;
@@ -32,11 +35,11 @@ export default function App() {
       sx={{
         width: "100vw",
         height: "100vh",
-        display: 'flex',
+        display: "flex",
         flexDirection: "column",
       }}
     >
-      <Header user={user} onLogin={setUser} />
+      <Header userEmail={user?.email} loginHandler={() => setShowLogin(true)} />
       <Paper
         elevation={3}
         sx={{
@@ -52,6 +55,12 @@ export default function App() {
           <ChatInput onSend={handleSendMessage} />
         </Box>
       </Paper>
+
+      <LoginModal
+        open={showLogin}
+        onClose={() => setShowLogin(false)}
+        onLogin={setUser}
+      />
     </Box>
   );
 }
