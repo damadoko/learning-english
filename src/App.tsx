@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Container, Paper, Box } from "@mui/material";
+import { Paper, Box } from "@mui/material";
 import { Header } from "./components/Header";
 import { ChatBox } from "./components/ChatBox";
 import { ChatInput } from "./components/ChatInput";
