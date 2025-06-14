@@ -6,15 +6,17 @@ import { ChatInput } from "./components/ChatInput";
 import type { Message, User } from "./types";
 import "./App.css";
 import { LoginModal } from "./components/LoginModal";
+import { RegisterModal } from "./components/RegisterModal";
 
 export default function App() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [user, setUser] = useState<User | null>(null);
   const [showLogin, setShowLogin] = useState<boolean>(false);
-  console.log(user)
+  const [showRegister, setShowRegister] = useState<boolean>(false);
+  console.log(user);
 
   const handleSendMessage = async (text: string) => {
-    const userMsg = { role: "user", content: text } as const;
+    const userMsg = { id: "1", role: "user", content: text } as const;
     setMessages((prev) => [...prev, userMsg]);
 
     const res = await fetch("/api/chat", {
@@ -26,7 +28,7 @@ export default function App() {
 
     setMessages((prev) => [
       ...prev,
-      { role: "assistant", content: data.reply } as const,
+      { role: "assistant", content: data.reply, id: "1" } as const,
     ]);
   };
 
@@ -39,7 +41,11 @@ export default function App() {
         flexDirection: "column",
       }}
     >
-      <Header userEmail={user?.email} loginHandler={() => setShowLogin(true)} />
+      <Header
+        userEmail={user?.email}
+        loginHandler={() => setShowLogin(true)}
+        registerHandler={() => setShowRegister(true)}
+      />
       <Paper
         elevation={3}
         sx={{
@@ -60,6 +66,12 @@ export default function App() {
         open={showLogin}
         onClose={() => setShowLogin(false)}
         onLogin={setUser}
+      />
+
+      <RegisterModal
+        open={showRegister}
+        onClose={() => setShowRegister(false)}
+        onRegister={setUser}
       />
     </Box>
   );
