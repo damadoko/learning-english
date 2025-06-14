@@ -1,6 +1,7 @@
 // services/messageService.ts
-import axios, { AxiosError } from "axios";
-import { API_AUTH_URL, USER_TOKEN_STORAGE_NAME } from "../constants";
+import { AxiosError } from "axios";
+import axios from "./axiosInstance";
+import { saveToken } from "../utils/authUtil";
 
 export type LoginRegisterPayload = {
   username: string;
@@ -32,12 +33,9 @@ export const login = async (
   payload: LoginRegisterPayload
 ): Promise<AuthResponse> => {
   try {
-    const res = await axios.post<LoginResponse>(
-      `${API_AUTH_URL}/login`,
-      payload
-    );
+    const res = await axios.post<LoginResponse>("/auth/login", payload);
     const { token, ...rest } = res.data;
-    localStorage.setItem(USER_TOKEN_STORAGE_NAME, token);
+    saveToken(token);
     return rest;
   } catch (error) {
     return (error as AxiosError)?.response?.data as AuthResponse;
@@ -48,10 +46,7 @@ export const register = async (
   payload: LoginRegisterPayload
 ): Promise<AuthResponse> => {
   try {
-    const res = await axios.post<AuthResponse>(
-      `${API_AUTH_URL}/register`,
-      payload
-    );
+    const res = await axios.post<AuthResponse>("/auth/register", payload);
     return res.data;
   } catch (error) {
     return (error as AxiosError)?.response?.data as AuthResponse;
