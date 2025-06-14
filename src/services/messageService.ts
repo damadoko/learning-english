@@ -3,30 +3,36 @@ import axios from "./axiosInstance";
 import type { Message } from "../types";
 import type { AxiosError } from "axios";
 
-type GetMessagesResponseSuccess = {
+type MessagesResponseSuccess = {
   success: true;
   messages: Message[];
 };
 
-type GetMessagesResponseFailed = {
+type MessagesResponseFailed = {
   success: false;
   error: { message: string };
 };
 
-type GetMessageResponse =
-  | GetMessagesResponseSuccess
-  | GetMessagesResponseFailed;
+type MessageResponse = MessagesResponseSuccess | MessagesResponseFailed;
 
-export const getMessages = async (): Promise<GetMessageResponse> => {
+export const getMessages = async (): Promise<MessageResponse> => {
   try {
-    const res = await axios.get<GetMessagesResponseSuccess>("/chat/history");
+    const res = await axios.get<MessagesResponseSuccess>("/chat/history");
     return res.data;
   } catch (error) {
-    return (error as AxiosError)?.response?.data as GetMessagesResponseFailed;
+    return (error as AxiosError)?.response?.data as MessagesResponseFailed;
   }
 };
 
-export const sendMessage = async (message: string): Promise<Message> => {
-  const res = await axios.post("/chat/send", { message });
-  return res.data;
+export const sendMessage = async (
+  message: string
+): Promise<MessageResponse> => {
+  try {
+    const res = await axios.post<MessagesResponseSuccess>("/chat/send", {
+      message,
+    });
+    return res.data;
+  } catch (error) {
+    return (error as AxiosError)?.response?.data as MessagesResponseFailed;
+  }
 };
