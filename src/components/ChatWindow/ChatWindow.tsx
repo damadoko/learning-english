@@ -11,7 +11,8 @@ import {
 import type { Message } from "../../types";
 import { ChatBox } from "./ChatBox";
 import { ChatInput } from "./ChatInput";
-import { getMessages } from "../../services";
+import { getMessages, sendMessage } from "../../services";
+import { handleUpdateChatItem, simulateTyping } from "../../utils/messageUtil";
 
 type ChatWindowProps = {
   username?: string;
@@ -40,15 +41,24 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ username }) => {
   }, [username]);
 
   const handleSendMessage = async (text: string) => {
-    const userMsg = { id: "1", role: "user", content: text } as const;
+    const userMsg: Message = {
+      id: crypto.randomUUID(),
+      role: "user",
+      content: text,
+    };
     setMessages((prev) => [...prev, userMsg]);
 
-    //Todo: Call API
-
-    setMessages((prev) => [
-      ...prev,
-      { role: "assistant", content: "TBU", id: "1" } as const,
-    ]);
+    const data = await sendMessage(text);
+    if (!data.success) {
+      return;
+    }
+    setMessages((prev) => [...prev, { ...data.messages?.[0], content: "" }]);
+    simulateTyping({
+      fullText: data.messages?.[0].content ?? "",
+      onUpdate: (currentText) => {
+        setMessages(handleUpdateChatItem(currentText));
+      },
+    });
   };
 
   return (
