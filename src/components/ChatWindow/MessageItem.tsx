@@ -7,6 +7,8 @@ import {
   CircularProgress,
 } from "@mui/material";
 import ReplayIcon from "@mui/icons-material/Replay";
+import VolumeUpIcon from "@mui/icons-material/VolumeUp";
+
 import type { Message } from "../../types";
 
 type MessageItemProps = {
@@ -17,8 +19,13 @@ export const MessageItem: React.FC<MessageItemProps> = ({
   message,
   retryHandler,
 }) => {
-  const isUser = ["user", "anonymous"].includes(message.role);
+  const handleSpeak = () => {
+    const utterance = new SpeechSynthesisUtterance(message.content);
+    utterance.lang = "en-US";
+    speechSynthesis.speak(utterance);
+  };
 
+  const isUser = message.role === "user";
   return (
     <Box
       display="flex"
@@ -42,6 +49,14 @@ export const MessageItem: React.FC<MessageItemProps> = ({
           <Typography variant="body1" sx={{ whiteSpace: "pre-line" }}>
             {message.content}
           </Typography>
+
+          {message.role === "assistant" && (
+            <Tooltip title="Listen">
+              <IconButton size="small" onClick={handleSpeak}>
+                <VolumeUpIcon fontSize="small" />
+              </IconButton>
+            </Tooltip>
+          )}
 
           {message.errorState === "failed" && (
             <Tooltip title="Retry">
