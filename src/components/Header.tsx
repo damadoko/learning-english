@@ -2,13 +2,13 @@ import { Button, Typography, AppBar, Toolbar } from "@mui/material";
 import { UserProfile } from "./UserProfile";
 
 export type HeaderProps = {
-  userEmail?: string;
+  username?: string;
   loginHandler: () => void;
   registerHandler: () => void;
 };
 
 export const Header: React.FC<HeaderProps> = ({
-  userEmail,
+  username,
   loginHandler,
   registerHandler,
 }) => {
@@ -19,9 +19,9 @@ export const Header: React.FC<HeaderProps> = ({
           Learn English with AI
         </Typography>
 
-        <UserProfile userEmail={userEmail} />
+        <UserProfile username={username} />
 
-        {!userEmail && (
+        {!username && (
           <>
             <Button
               variant="outlined"

@@ -9,12 +9,10 @@ import {
   Box,
 } from "@mui/material";
 
-import type { User } from "../types";
-
 export type RegisterModalProps = {
   open: boolean;
   onClose: () => void;
-  onRegister: (user: User) => void; // pass email back
+  onRegister: (username: string) => void; // pass email back
 };
 
 export const RegisterModal: React.FC<RegisterModalProps> = ({
@@ -22,15 +20,15 @@ export const RegisterModal: React.FC<RegisterModalProps> = ({
   onClose,
   onRegister,
 }) => {
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
   const handleSubmit = () => {
     // TODO: Call backend API here, for now mock
-    if (email && password) {
-      onRegister({ email });
+    if (username && password) {
+      onRegister(username);
       onClose();
-      setEmail("");
+      setUsername("");
       setPassword("");
     }
   };
@@ -41,11 +39,11 @@ export const RegisterModal: React.FC<RegisterModalProps> = ({
       <DialogContent>
         <Box display="flex" flexDirection="column" gap={2} mt={1}>
           <TextField
-            label="Email"
-            type="email"
+            label="Username"
+            type="text"
             fullWidth
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
           />
           <TextField
             label="Password"
