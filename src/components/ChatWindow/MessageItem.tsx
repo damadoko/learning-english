@@ -22,6 +22,9 @@ export const MessageItem: React.FC<MessageItemProps> = ({
   const handleSpeak = () => {
     const utterance = new SpeechSynthesisUtterance(message.content);
     utterance.lang = "en-US";
+    if (speechSynthesis.speaking) {
+      speechSynthesis.cancel();
+    }
     speechSynthesis.speak(utterance);
   };
 
