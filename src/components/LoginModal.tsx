@@ -24,11 +24,21 @@ export const LoginModal: React.FC<LoginModalProps> = ({
 }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [isLoginSuccess, setIsLoginSuccess] = useState(false);
 
   const handleSubmit = async () => {
     if (!username || !password) return;
-    const { success } = await login({ username, password });
-    if (!success) onLogin(username);
+    setErrorMessage("");
+
+    const response = await login({ username, password });
+    if (!response.success) {
+      setErrorMessage(response.error?.message || "Login failed!");
+      return;
+    }
+
+    setIsLoginSuccess(true);
+    onLogin(username);
     onClose();
     setUsername("");
     setPassword("");
@@ -36,30 +46,73 @@ export const LoginModal: React.FC<LoginModalProps> = ({
 
   return (
     <Dialog open={open} onClose={onClose}>
-      <DialogTitle align="center">Welcome back!</DialogTitle>
+      <DialogTitle align="center">
+        {isLoginSuccess ? "Login Successful 🎉" : "Welcome back!"}
+      </DialogTitle>
+
       <DialogContent>
-        <Box display="flex" flexDirection="column" gap={2} mt={1}>
-          <TextField
-            label="Username"
-            type="text"
-            fullWidth
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
-          <TextField
-            label="Password"
-            type="password"
-            fullWidth
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </Box>
+        {isLoginSuccess && (
+          <Box textAlign="center" p={3}>
+            <Box
+              sx={{
+                fontSize: 60,
+                color: "green",
+              }}
+            >
+              ✅
+            </Box>
+            <Box mt={2}>You are now logged in.</Box>
+          </Box>
+        )}
+
+        {!isLoginSuccess && (
+          <Box display="flex" flexDirection="column" gap={2} mt={1}>
+            <TextField
+              label="Username"
+              type="text"
+              fullWidth
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+            />
+            <TextField
+              label="Password"
+              type="password"
+              fullWidth
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            {errorMessage && (
+              <Box color="red" fontSize={14}>
+                {errorMessage}
+              </Box>
+            )}
+          </Box>
+        )}
       </DialogContent>
+
       <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
-        <Button onClick={handleSubmit} variant="contained">
-          Continue
-        </Button>
+        {isLoginSuccess && (
+          <Button
+            onClick={() => {
+              onClose();
+              setUsername("");
+              setPassword("");
+              setErrorMessage("");
+              setIsLoginSuccess(false);
+            }}
+            variant="contained"
+          >
+            OK
+          </Button>
+        )}
+        {!isLoginSuccess && (
+          <>
+            <Button onClick={onClose}>Cancel</Button>
+            <Button onClick={handleSubmit} variant="contained">
+              Continue
+            </Button>
+          </>
+        )}
       </DialogActions>
     </Dialog>
   );
