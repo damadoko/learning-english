@@ -1,4 +1,4 @@
-import type { Message } from "../types";
+import type { Message, MessageErrorState } from "../types";
 
 export type SimulateTypingParams = {
   fullText: string;
@@ -10,6 +10,14 @@ export const handleUpdateChatItem =
     const lastMessage = prev.slice(-1)[0];
     const remainingMessage = prev.slice(0, -1);
     return [...remainingMessage, { ...lastMessage, content: currentText }];
+  };
+
+export const markLastSendNeedRetry =
+  (errorState: MessageErrorState) =>
+  (prev: Message[]): Message[] => {
+    const lastMessage = prev.slice(-1)[0];
+    const remainingMessage = prev.slice(0, -1);
+    return [...remainingMessage, { ...lastMessage, errorState }];
   };
 
 export const simulateTyping = ({

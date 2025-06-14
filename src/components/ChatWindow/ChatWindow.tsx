@@ -12,7 +12,11 @@ import type { Message } from "../../types";
 import { ChatBox } from "./ChatBox";
 import { ChatInput } from "./ChatInput";
 import { getMessages, sendMessage } from "../../services";
-import { handleUpdateChatItem, simulateTyping } from "../../utils/messageUtil";
+import {
+  handleUpdateChatItem,
+  markLastSendNeedRetry,
+  simulateTyping,
+} from "../../utils/messageUtil";
 
 type ChatWindowProps = {
   username?: string;
@@ -40,18 +44,22 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ username }) => {
     handleGetHistory();
   }, [username]);
 
-  const handleSendMessage = async (text: string) => {
-    const userMsg: Message = {
-      id: crypto.randomUUID(),
-      role: "user",
-      content: text,
-    };
-    setMessages((prev) => [...prev, userMsg]);
+  const handleSendMessage = async (msg: Message) => {
+    if (msg.errorState === "none") {
+      setMessages((prev) => [...prev, msg]);
+    }
 
-    const data = await sendMessage(text);
+    setMessages(markLastSendNeedRetry("retrying"));
+    const data = await sendMessage(msg.content);
     if (!data.success) {
+      setMessages(markLastSendNeedRetry("failed"));
       return;
     }
+
+    if (msg.errorState !== "none") {
+      setMessages(markLastSendNeedRetry("none"));
+    }
+
     setMessages((prev) => [...prev, { ...data.messages?.[0], content: "" }]);
     simulateTyping({
       fullText: data.messages?.[0].content ?? "",
@@ -91,7 +99,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ username }) => {
       )}
       {!isError && (
         <>
-          <ChatBox messages={messages} />
+          <ChatBox onRetry={handleSendMessage} messages={messages} />
           <Box mt="auto" p={2}>
             <ChatInput onSend={handleSendMessage} />
           </Box>

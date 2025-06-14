@@ -6,9 +6,10 @@ import { MessageItem } from "./MessageItem";
 
 export type ChatBoxProps = {
   messages: Message[];
+  onRetry: (msg: Message) => void;
 };
 
-export const ChatBox: React.FC<ChatBoxProps> = ({ messages }) => {
+export const ChatBox: React.FC<ChatBoxProps> = ({ messages, onRetry }) => {
   const bottomRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -20,7 +21,11 @@ export const ChatBox: React.FC<ChatBoxProps> = ({ messages }) => {
       sx={{ flexGrow: 1, overflowY: "auto", px: 3, py: 2, bgcolor: "#f5f5f5" }}
     >
       {messages.map((msg) => (
-        <MessageItem key={msg.id} message={msg} />
+        <MessageItem
+          key={msg.id}
+          message={msg}
+          retryHandler={() => onRetry(msg)}
+        />
       ))}
       <div ref={bottomRef} />
     </Box>

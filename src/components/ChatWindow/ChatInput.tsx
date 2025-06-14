@@ -5,9 +5,10 @@ import MicIcon from "@mui/icons-material/Mic";
 import SpeechRecognition, {
   useSpeechRecognition,
 } from "react-speech-recognition";
+import type { Message } from "../../types";
 
 export type ChatInputProps = {
-  onSend: (text: string) => void;
+  onSend: (msg: Message) => void;
 };
 export const ChatInput: React.FC<ChatInputProps> = ({ onSend }) => {
   const [text, setText] = useState("");
@@ -26,7 +27,12 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSend }) => {
 
   const handleSend = () => {
     if (!text.trim()) return;
-    onSend(text);
+    onSend({
+      id: crypto.randomUUID(),
+      role: "user",
+      content: text,
+      errorState: "none",
+    });
     setText("");
     resetTranscript();
   };
