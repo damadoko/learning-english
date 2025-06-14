@@ -1,6 +1,11 @@
 import axios from "./axiosInstance";
 
-import type { Message } from "../types";
+import type {
+  Message,
+  MessageResponse,
+  MessagesSuccessResponse,
+  GenericFailedResponse,
+} from "../types";
 import type { AxiosError } from "axios";
 
 type MessagesResponseSuccess = {
@@ -8,19 +13,12 @@ type MessagesResponseSuccess = {
   messages: Message[];
 };
 
-type MessagesResponseFailed = {
-  success: false;
-  error: { message: string };
-};
-
-type MessageResponse = MessagesResponseSuccess | MessagesResponseFailed;
-
 export const getMessages = async (): Promise<MessageResponse> => {
   try {
-    const res = await axios.get<MessagesResponseSuccess>("/chat/history");
+    const res = await axios.get<MessagesSuccessResponse>("/chat/history");
     return res.data;
   } catch (error) {
-    return (error as AxiosError)?.response?.data as MessagesResponseFailed;
+    return (error as AxiosError)?.response?.data as GenericFailedResponse;
   }
 };
 
@@ -33,6 +31,6 @@ export const sendMessage = async (
     });
     return res.data;
   } catch (error) {
-    return (error as AxiosError)?.response?.data as MessagesResponseFailed;
+    return (error as AxiosError)?.response?.data as GenericFailedResponse;
   }
 };
