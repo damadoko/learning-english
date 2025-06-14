@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Paper, Box } from "@mui/material";
+import {
+  Box,
+  Paper,
+  Backdrop,
+  CircularProgress,
+  Typography,
+  Button,
+} from "@mui/material";
 
 import type { Message } from "../../types";
 import { ChatBox } from "./ChatBox";
@@ -11,14 +18,25 @@ type ChatWindowProps = {
 };
 
 export const ChatWindow: React.FC<ChatWindowProps> = ({ username }) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [isError, setIsError] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
+
+  const handleGetHistory = async () => {
+    setIsError(false);
+    setIsLoading(true);
+    const data = await getMessages();
+    setIsLoading(false);
+    if (!data.success) {
+      setIsError(true);
+      return;
+    }
+    setMessages(data.messages);
+  };
 
   useEffect(() => {
     if (!username) return;
-    getMessages().then((data) => {
-      if (!data.success) return;
-      setMessages(data.messages);
-    });
+    handleGetHistory();
   }, [username]);
 
   const handleSendMessage = async (text: string) => {
@@ -44,10 +62,44 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ username }) => {
         flexDirection: "column",
       }}
     >
-      <ChatBox messages={messages} />
-      <Box mt="auto" p={2}>
-        <ChatInput onSend={handleSendMessage} />
-      </Box>
+      {isError && (
+        <Box
+          flexGrow={1}
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          flexDirection="column"
+          gap={2}
+        >
+          <Typography color="error" variant="body1">
+            Failed to fetch messages!
+          </Typography>
+          <Button variant="contained" onClick={handleGetHistory}>
+            Retry
+          </Button>
+        </Box>
+      )}
+      {!isError && (
+        <>
+          <ChatBox messages={messages} />
+          <Box mt="auto" p={2}>
+            <ChatInput onSend={handleSendMessage} />
+          </Box>
+        </>
+      )}
+
+      {isLoading && (
+        <Backdrop
+          sx={{
+            color: "#fff",
+            zIndex: (theme) => theme.zIndex.drawer + 1,
+            backgroundColor: "rgba(0, 0, 0, 0.8)",
+          }}
+          open
+        >
+          <CircularProgress color="inherit" />
+        </Backdrop>
+      )}
     </Paper>
   );
 };
