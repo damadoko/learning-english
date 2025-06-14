@@ -36,3 +36,8 @@ export const simulateTyping = ({
     }
   }, 30);
 };
+
+export const getSelectedWord = () => {
+  const selection = window.getSelection();
+  return selection?.toString().trim() || "";
+};
