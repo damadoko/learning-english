@@ -23,6 +23,7 @@ export const MessageItem: React.FC<MessageItemProps> = ({ message }) => {
           borderRadius: 2,
           borderTopRightRadius: isUser ? 0 : 2,
           borderTopLeftRadius: isUser ? 2 : 0,
+          textAlign: isUser ? "right" : "left",
         }}
       >
         <Typography variant="body1" sx={{ whiteSpace: "pre-line" }}>
