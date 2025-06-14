@@ -9,7 +9,7 @@ import {
   Box,
 } from "@mui/material";
 
-import { login } from "../services";
+import { login } from "../../services";
 
 export type LoginModalProps = {
   open: boolean;

@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { Paper, Box, Backdrop, CircularProgress } from "@mui/material";
-import { Header } from "./components/Header";
-import { ChatBox } from "./components/ChatBox";
-import { ChatInput } from "./components/ChatInput";
+import { Header } from "./components/Header/Header";
+import { ChatBox } from "./components/ChatWindow/ChatBox";
+import { ChatInput } from "./components/ChatWindow/ChatInput";
 import type { Message } from "./types";
 import "./App.css";
-import { LoginModal } from "./components/LoginModal";
-import { RegisterModal } from "./components/RegisterModal";
+import { LoginModal } from "./components/Modal/LoginModal";
+import { RegisterModal } from "./components/Modal/RegisterModal";
 import { usePermission } from "./hooks/usePermission";
 
 export default function App() {

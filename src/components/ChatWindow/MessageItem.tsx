@@ -1,5 +1,5 @@
 import { Box, Typography, Paper } from "@mui/material";
-import type { Message } from "../types";
+import type { Message } from "../../types";
 
 type MessageItemProps = {
   message: Message;
