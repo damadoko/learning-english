@@ -1,38 +1,16 @@
 import { useState } from "react";
-import { Paper, Box, Backdrop, CircularProgress } from "@mui/material";
+import { Box, Backdrop, CircularProgress } from "@mui/material";
 import { Header } from "./components/Header/Header";
-import { ChatBox } from "./components/ChatWindow/ChatBox";
-import { ChatInput } from "./components/ChatWindow/ChatInput";
-import type { Message } from "./types";
 import "./App.css";
 import { LoginModal } from "./components/Modal/LoginModal";
 import { RegisterModal } from "./components/Modal/RegisterModal";
 import { usePermission } from "./hooks/usePermission";
+import { ChatWindow } from "./components/ChatWindow/ChatWindow";
 
 export default function App() {
-  const [messages, setMessages] = useState<Message[]>([]);
   const [showLogin, setShowLogin] = useState<boolean>(false);
   const [showRegister, setShowRegister] = useState<boolean>(false);
-
   const { username, setUsername, handleLogout, isLoading } = usePermission();
-
-  const handleSendMessage = async (text: string) => {
-    const userMsg = { id: "1", role: "user", content: text } as const;
-    setMessages((prev) => [...prev, userMsg]);
-
-    // const res = await fetch("/api/chat", {
-    //   method: "POST",
-    //   headers: { "Content-Type": "application/json" },
-    //   body: JSON.stringify({ message: text, userId: user?.id ?? null }),
-    // });
-    // const data = await res.json();
-
-    setMessages((prev) => [
-      ...prev,
-      { role: "assistant", content: "TBU", id: "1" } as const,
-    ]);
-  };
-  console.log({ isLoading });
 
   return (
     <Box
@@ -49,21 +27,7 @@ export default function App() {
         loginHandler={() => setShowLogin(true)}
         registerHandler={() => setShowRegister(true)}
       />
-      <Paper
-        elevation={3}
-        sx={{
-          height: "85vh",
-          width: "100%",
-          margin: "0 auto",
-          display: "flex",
-          flexDirection: "column",
-        }}
-      >
-        <ChatBox messages={messages} />
-        <Box mt="auto" p={2}>
-          <ChatInput onSend={handleSendMessage} />
-        </Box>
-      </Paper>
+      <ChatWindow username={username} />
 
       <LoginModal
         open={showLogin}
