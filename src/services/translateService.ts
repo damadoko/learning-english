@@ -12,7 +12,7 @@ export const fetchTranslation = async (
 ): Promise<TranslateResponse> => {
   try {
     const response = await axios.get<TranslateSuccessResponse>(
-      `/auth/translate?word=${word}`
+      `/translate?word=${word}`
     );
     return response.data;
   } catch (error) {

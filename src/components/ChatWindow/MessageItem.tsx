@@ -6,7 +6,8 @@ import {
   Tooltip,
   CircularProgress,
   Menu,
-  MenuItem,
+  Button,
+  Divider,
 } from "@mui/material";
 import ReplayIcon from "@mui/icons-material/Replay";
 import VolumeUpIcon from "@mui/icons-material/VolumeUp";
@@ -14,6 +15,7 @@ import VolumeUpIcon from "@mui/icons-material/VolumeUp";
 import type { Message, Translation } from "../../types";
 import { getSelectedWord } from "../../utils/messageUtil";
 import { useState } from "react";
+import { fetchTranslation } from "../../services/translateService";
 
 type MessageItemProps = {
   message: Message;
@@ -29,6 +31,7 @@ export const MessageItem: React.FC<MessageItemProps> = ({
     top: number;
     left: number;
   } | null>(null);
+  const [isError, setIsError] = useState(false);
 
   const handleSpeak = (content?: string) => {
     if (!content) return;
@@ -40,12 +43,26 @@ export const MessageItem: React.FC<MessageItemProps> = ({
     speechSynthesis.speak(utterance);
   };
 
-  const handleDoubleClick = (e: React.MouseEvent) => {
-    const word = getSelectedWord();
-    if (!word) return;
-    setTranslation({ en: word });
-    setAnchorPos({ top: e.clientY, left: e.clientX });
-  };
+  const handleTranslation =
+    (type: "retry" | "new") => async (e: React.MouseEvent) => {
+      let word: string | undefined;
+      if (type === "retry") {
+        word = translation?.en;
+      } else {
+        word = getSelectedWord();
+      }
+      if (!word) return;
+      setTranslation({ en: word });
+      setAnchorPos({ top: e.clientY, left: e.clientX });
+
+      const data = await fetchTranslation(word);
+      if (!data.success) {
+        setIsError(true);
+        return;
+      }
+      setIsError(false);
+      setTranslation(data.translate);
+    };
 
   const isUser = message.role === "user";
   return (
@@ -69,7 +86,7 @@ export const MessageItem: React.FC<MessageItemProps> = ({
       >
         <Box display="flex" alignItems="center" gap={1}>
           <Typography
-            onDoubleClick={handleDoubleClick}
+            onDoubleClick={handleTranslation("new")}
             variant="body1"
             sx={{ whiteSpace: "pre-line" }}
           >
@@ -104,18 +121,63 @@ export const MessageItem: React.FC<MessageItemProps> = ({
         anchorPosition={
           anchorPos ? { top: anchorPos.top, left: anchorPos.left } : undefined
         }
+        slotProps={{
+          paper: {
+            sx: {
+              p: 2,
+              maxWidth: 300,
+              borderRadius: 2,
+            },
+          },
+        }}
       >
-        <MenuItem>
-          <strong>{translation?.en}</strong>
-        </MenuItem>
-        <MenuItem>
-          <em>{translation?.pronunciation || "..."}</em>
-        </MenuItem>
-        <MenuItem>{translation?.vi || "Đang dịch..."}</MenuItem>
-        <MenuItem>{translation?.enDefinition || ""}</MenuItem>
-        <MenuItem onClick={() => handleSpeak(translation?.en)}>
-          🔊 Phát âm
-        </MenuItem>
+        {isError && (
+          <Box display="flex" alignItems="center" gap={1}>
+            <Typography color="error">❌ Lỗi khi dịch</Typography>
+            <Button size="small" onClick={handleTranslation("retry")}>
+              Thử lại
+            </Button>
+          </Box>
+        )}
+
+        {!isError && (
+          <Box display="flex" flexDirection="column" gap={1}>
+            <Box
+              display="flex"
+              alignItems="center"
+              justifyContent="space-between"
+            >
+              <Typography variant="h6">{translation?.en || "..."}</Typography>
+              <IconButton
+                size="small"
+                onClick={() => handleSpeak(translation?.en)}
+                title="Phát âm"
+              >
+                <VolumeUpIcon fontSize="small" />
+              </IconButton>
+            </Box>
+
+            {translation?.pronunciation && (
+              <Typography variant="body2" color="text.secondary">
+                /{translation.pronunciation}/
+              </Typography>
+            )}
+
+            <Divider />
+
+            {translation?.vi && (
+              <Typography variant="body1" fontWeight="medium">
+                {translation.vi}
+              </Typography>
+            )}
+
+            {translation?.enDefinition && (
+              <Typography variant="body2" color="text.secondary">
+                {translation.enDefinition}
+              </Typography>
+            )}
+          </Box>
+        )}
       </Menu>
     </Box>
   );
