@@ -8,23 +8,32 @@ export type UsePermissionResponse = {
   username?: string;
   setUsername: React.Dispatch<React.SetStateAction<string | undefined>>;
   handleLogout: () => void;
+  isLoading: boolean;
 };
 
 export const usePermission = (): UsePermissionResponse => {
   const [username, setUsername] = useState<string>();
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const token = getToken();
-    console.log(token);
-    if (!token) return;
+    if (!token) {
+      setIsLoading(false);
+      return;
+    }
     axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-    authToken().then((data) => {
-      if (!data.success) {
-        clearToken();
-        return;
-      }
-      setUsername(data.user.username);
-    });
+    setIsLoading(true);
+    authToken()
+      .then((data) => {
+        if (!data.success) {
+          clearToken();
+          return;
+        }
+        setUsername(data.user.username);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   }, []);
 
   const handleLogout = () => {
@@ -32,5 +41,5 @@ export const usePermission = (): UsePermissionResponse => {
     clearToken();
   };
 
-  return { username, setUsername, handleLogout };
+  return { username, isLoading, setUsername, handleLogout };
 };

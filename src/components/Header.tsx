@@ -4,12 +4,14 @@ import { UserProfile } from "./UserProfile";
 export type HeaderProps = {
   username?: string;
   loginHandler: () => void;
+  logoutHandler: () => void;
   registerHandler: () => void;
 };
 
 export const Header: React.FC<HeaderProps> = ({
   username,
   loginHandler,
+  logoutHandler,
   registerHandler,
 }) => {
   return (
@@ -19,7 +21,7 @@ export const Header: React.FC<HeaderProps> = ({
           Learn English with AI
         </Typography>
 
-        <UserProfile username={username} />
+        <UserProfile logoutHandler={logoutHandler} username={username} />
 
         {!username && (
           <>
