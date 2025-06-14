@@ -1,5 +1,5 @@
-// services/messageService.ts
 import { AxiosError } from "axios";
+
 import axios from "./axiosInstance";
 import { saveToken } from "../utils/authUtil";
 
@@ -47,6 +47,15 @@ export const register = async (
 ): Promise<AuthResponse> => {
   try {
     const res = await axios.post<AuthResponse>("/auth/register", payload);
+    return res.data;
+  } catch (error) {
+    return (error as AxiosError)?.response?.data as AuthResponse;
+  }
+};
+
+export const authToken = async (): Promise<AuthResponse> => {
+  try {
+    const res = await axios.get<AuthResponse>("/auth");
     return res.data;
   } catch (error) {
     return (error as AxiosError)?.response?.data as AuthResponse;

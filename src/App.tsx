@@ -7,12 +7,14 @@ import type { Message } from "./types";
 import "./App.css";
 import { LoginModal } from "./components/LoginModal";
 import { RegisterModal } from "./components/RegisterModal";
+import { usePermission } from "./hooks/usePermission";
 
 export default function App() {
   const [messages, setMessages] = useState<Message[]>([]);
-  const [username, setUsername] = useState<string>();
   const [showLogin, setShowLogin] = useState<boolean>(false);
   const [showRegister, setShowRegister] = useState<boolean>(false);
+
+  const { username, setUsername } = usePermission();
 
   const handleSendMessage = async (text: string) => {
     const userMsg = { id: "1", role: "user", content: text } as const;
