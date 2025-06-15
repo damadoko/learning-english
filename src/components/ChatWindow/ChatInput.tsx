@@ -7,12 +7,14 @@ import SpeechRecognition, {
   useSpeechRecognition,
 } from "react-speech-recognition";
 import type { Message } from "../../types";
+import { VoiceChat } from "../VoiceChat/VoiceChat";
 
 export type ChatInputProps = {
-  onSend: (msg: Message) => void;
+  onSend: (msg: Message) => Promise<Message | null>;
 };
 export const ChatInput: React.FC<ChatInputProps> = ({ onSend }) => {
   const [text, setText] = useState("");
+  const [isVoiceMode, setIsVoiceMode] = useState(false);
   const {
     transcript,
     listening,
@@ -21,9 +23,8 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSend }) => {
   } = useSpeechRecognition();
 
   useEffect(() => {
-    if (transcript && !listening) {
-      setText(transcript); // Đưa vào ô input
-    }
+    if (isVoiceMode || !transcript || listening) return;
+    setText(transcript);
   }, [transcript, listening]);
 
   const handleSend = () => {
@@ -69,9 +70,21 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSend }) => {
       <IconButton onClick={handleMic} color={listening ? "primary" : "default"}>
         {listening ? <GraphicEqIcon /> : <MicIcon />}
       </IconButton>
-      <IconButton onClick={handleSend}>
-        <SendIcon />
-      </IconButton>
+
+      {(!!text || listening) && (
+        <IconButton onClick={handleSend}>
+          <SendIcon />
+        </IconButton>
+      )}
+      {!text && !listening && (
+        <IconButton onClick={() => setIsVoiceMode(true)}>
+          <GraphicEqIcon />
+        </IconButton>
+      )}
+
+      {isVoiceMode && (
+        <VoiceChat onClose={() => setIsVoiceMode(false)} onSend={onSend} />
+      )}
     </Box>
   );
 };

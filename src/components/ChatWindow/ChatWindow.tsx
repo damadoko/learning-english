@@ -44,7 +44,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ username }) => {
     handleGetHistory();
   }, [username]);
 
-  const handleSendMessage = async (msg: Message) => {
+  const handleSendMessage = async (msg: Message): Promise<Message | null> => {
     if (msg.errorState === "none") {
       setMessages((prev) => [...prev, msg]);
     }
@@ -53,7 +53,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ username }) => {
     const data = await sendMessage(msg.content);
     if (!data.success) {
       setMessages(markLastSendNeedRetry("failed"));
-      return;
+      return null;
     }
 
     if (msg.errorState !== "none") {
@@ -67,6 +67,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ username }) => {
         setMessages(handleUpdateChatItem(currentText));
       },
     });
+    return data.messages?.[0];
   };
 
   return (

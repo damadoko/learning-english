@@ -7,11 +7,11 @@ export type MicWaveformProps = {
 }
 
 export const MicWaveform: React.FC<MicWaveformProps> = ({active}) => {
-  if (!active) return null;
   return (
     <Lottie
       animationData={micWaveAnimation}
-      loop
+      autoplay={active}
+      loop={active}
       style={{ width: 120, height: 120 }}
     />
   );

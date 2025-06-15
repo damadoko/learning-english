@@ -6,7 +6,7 @@ import { MessageItem } from "./MessageItem";
 
 export type ChatBoxProps = {
   messages: Message[];
-  onRetry: (msg: Message) => void;
+  onRetry: (msg: Message) => Promise<Message | null>;
 };
 
 export const ChatBox: React.FC<ChatBoxProps> = ({ messages, onRetry }) => {
