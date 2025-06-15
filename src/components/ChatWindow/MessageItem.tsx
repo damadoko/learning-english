@@ -13,7 +13,7 @@ import ReplayIcon from "@mui/icons-material/Replay";
 import VolumeUpIcon from "@mui/icons-material/VolumeUp";
 
 import type { Message, Translation } from "../../types";
-import { getSelectedWord } from "../../utils/messageUtil";
+import { getSelectedWord, textToSpeech } from "../../utils/messageUtil";
 import { useState } from "react";
 import { fetchTranslation } from "../../services/translateService";
 
@@ -32,16 +32,6 @@ export const MessageItem: React.FC<MessageItemProps> = ({
     left: number;
   } | null>(null);
   const [isError, setIsError] = useState(false);
-
-  const handleSpeak = (content?: string) => {
-    if (!content) return;
-    const utterance = new SpeechSynthesisUtterance(content);
-    utterance.lang = "en-US";
-    if (speechSynthesis.speaking) {
-      speechSynthesis.cancel();
-    }
-    speechSynthesis.speak(utterance);
-  };
 
   const handleTranslation =
     (type: "retry" | "new") => async (e: React.MouseEvent) => {
@@ -74,7 +64,7 @@ export const MessageItem: React.FC<MessageItemProps> = ({
       <Paper
         elevation={2}
         sx={{
-          padding:"12px 16px",
+          padding: "12px 16px",
           maxWidth: "60%",
           bgcolor: isUser ? "#D1E8FF" : "#fff",
           borderRadius: "12px",
@@ -97,7 +87,7 @@ export const MessageItem: React.FC<MessageItemProps> = ({
             <Tooltip title="Listen">
               <IconButton
                 size="small"
-                onClick={() => handleSpeak(message.content)}
+                onClick={() => textToSpeech(message.content)}
               >
                 <VolumeUpIcon fontSize="small" />
               </IconButton>
@@ -150,7 +140,7 @@ export const MessageItem: React.FC<MessageItemProps> = ({
               <Typography variant="h6">{translation?.en || "..."}</Typography>
               <IconButton
                 size="small"
-                onClick={() => handleSpeak(translation?.en)}
+                onClick={() => textToSpeech(translation?.en)}
                 title="Phát âm"
               >
                 <VolumeUpIcon fontSize="small" />

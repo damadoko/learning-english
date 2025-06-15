@@ -41,3 +41,16 @@ export const getSelectedWord = () => {
   const selection = window.getSelection();
   return selection?.toString().trim() || "";
 };
+
+export const textToSpeech = (content?: string): SpeechSynthesisUtterance => {
+  const utterance = new SpeechSynthesisUtterance(content);
+  if (!content) return utterance;
+
+  utterance.lang = "en-US";
+  if (speechSynthesis.speaking) {
+    speechSynthesis.cancel();
+  }
+  speechSynthesis.speak(utterance);
+
+  return utterance;
+};
