@@ -58,10 +58,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ username }) => {
       setMessages(markLastSendNeedRetry("failed"));
       return null;
     }
-
-    if (msg.errorState !== "none") {
-      setMessages(markLastSendNeedRetry("none"));
-    }
+    setMessages(markLastSendNeedRetry("none"));
 
     setMessages((prev) => [...prev, { ...data.messages?.[0], content: "" }]);
     simulateTyping({
@@ -106,6 +103,14 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ username }) => {
       {!isError && (
         <>
           <ChatBox onRetry={handleSendMessage} messages={messages} />
+          {!username && (
+            <Box mt={1} textAlign="center">
+              <Typography variant="caption" color="gray">
+                You are using this app in guest mode. Register/Login to save
+                your learning progress
+              </Typography>
+            </Box>
+          )}
           <Box mt="auto" p={2}>
             <ChatInput onSend={handleSendMessage} />
           </Box>

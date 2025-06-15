@@ -26,7 +26,10 @@ export const sendMessage = async (
   message: string
 ): Promise<MessageResponse> => {
   try {
-    const res = await axios.post<MessagesResponseSuccess>("/chat/send", {
+    const token = localStorage.getItem("access_token");
+    const endpoint = token ? "/chat/send" : "/chat/guest-send";
+
+    const res = await axios.post<MessagesResponseSuccess>(endpoint, {
       message,
     });
     return res.data;
