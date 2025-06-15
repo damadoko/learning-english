@@ -70,8 +70,11 @@ export const MessageItem: React.FC<MessageItemProps> = ({
           borderRadius: "12px",
           borderTopRightRadius: isUser ? 0 : 2,
           borderTopLeftRadius: isUser ? 2 : 0,
-          textAlign: isUser ? "right" : "left",
+          textAlign: "left",
+          alignSelf: "flex-end",
           boxShadow: "0px 1px 4px rgba(0,0,0,0.1)",
+          wordBreak: "break-word",
+          whiteSpace: "pre-wrap",
         }}
       >
         <Box display="flex" alignItems="center" gap={1}>
