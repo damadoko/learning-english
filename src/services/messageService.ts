@@ -7,6 +7,7 @@ import type {
   GenericFailedResponse,
 } from "../types";
 import type { AxiosError } from "axios";
+import { getToken } from "../utils/authUtil";
 
 type MessagesResponseSuccess = {
   success: true;
@@ -26,7 +27,7 @@ export const sendMessage = async (
   message: string
 ): Promise<MessageResponse> => {
   try {
-    const token = localStorage.getItem("access_token");
+    const token = getToken();
     const endpoint = token ? "/chat/send" : "/chat/guest-send";
 
     const res = await axios.post<MessagesResponseSuccess>(endpoint, {
