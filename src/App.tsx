@@ -29,17 +29,20 @@ export default function App() {
       />
       <ChatWindow username={username} />
 
-      <LoginModal
-        open={showLogin}
-        onClose={() => setShowLogin(false)}
-        onLogin={setUsername}
-      />
+      {showLogin && (
+        <LoginModal
+          open={showLogin}
+          onClose={() => setShowLogin(false)}
+          onLogin={setUsername}
+        />
+      )}
 
-      <RegisterModal
-        open={showRegister}
-        onClose={() => setShowRegister(false)}
-        onRegister={setUsername}
-      />
+      {showRegister && (
+        <RegisterModal
+          open={showRegister}
+          onClose={() => setShowRegister(false)}
+        />
+      )}
 
       {isLoading && (
         <Backdrop
