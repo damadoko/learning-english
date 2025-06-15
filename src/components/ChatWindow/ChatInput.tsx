@@ -8,6 +8,7 @@ import SpeechRecognition, {
 } from "react-speech-recognition";
 import type { Message } from "../../types";
 import { VoiceChat } from "../VoiceChat/VoiceChat";
+import { simulateTyping } from "../../utils/messageUtil";
 
 export type ChatInputProps = {
   onSend: (msg: Message) => Promise<Message | null>;
@@ -24,7 +25,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSend }) => {
 
   useEffect(() => {
     if (isVoiceMode || !transcript || listening) return;
-    setText(transcript);
+    simulateTyping({ fullText:transcript , onUpdate: setText});
   }, [transcript, listening]);
 
   const handleSend = () => {
