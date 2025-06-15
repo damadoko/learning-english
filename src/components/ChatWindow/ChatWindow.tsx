@@ -78,6 +78,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ username }) => {
         margin: "0 auto",
         display: "flex",
         flexDirection: "column",
+        backgroundColor: "#f4f6f8",
       }}
     >
       {isError && (
@@ -97,6 +98,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ username }) => {
           </Button>
         </Box>
       )}
+
       {!isError && (
         <>
           <ChatBox onRetry={handleSendMessage} messages={messages} />

@@ -74,14 +74,14 @@ export const MessageItem: React.FC<MessageItemProps> = ({
       <Paper
         elevation={2}
         sx={{
-          px: 2,
-          py: 1,
-          maxWidth: "75%",
-          bgcolor: isUser ? "#DCF8C6" : "#fff",
-          borderRadius: 2,
+          padding:"12px 16px",
+          maxWidth: "60%",
+          bgcolor: isUser ? "#D1E8FF" : "#fff",
+          borderRadius: "12px",
           borderTopRightRadius: isUser ? 0 : 2,
           borderTopLeftRadius: isUser ? 2 : 0,
           textAlign: isUser ? "right" : "left",
+          boxShadow: "0px 1px 4px rgba(0,0,0,0.1)",
         }}
       >
         <Box display="flex" alignItems="center" gap={1}>

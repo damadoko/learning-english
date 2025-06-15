@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Box, TextField, IconButton } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import MicIcon from "@mui/icons-material/Mic";
+import GraphicEqIcon from "@mui/icons-material/GraphicEq";
 import SpeechRecognition, {
   useSpeechRecognition,
 } from "react-speech-recognition";
@@ -48,7 +49,15 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSend }) => {
   };
 
   return (
-    <Box display="flex">
+    <Box
+      display="flex"
+      alignItems={"center"}
+      gap={1}
+      p={1}
+      bgcolor="#fff"
+      boxShadow="0px 1px 4px rgba(0,0,0,0.1)"
+      borderRadius={2}
+    >
       <TextField
         fullWidth
         variant="outlined"
@@ -58,7 +67,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSend }) => {
         onKeyDown={(e) => e.key === "Enter" && handleSend()}
       />
       <IconButton onClick={handleMic} color={listening ? "primary" : "default"}>
-        <MicIcon />
+        {listening ? <GraphicEqIcon /> : <MicIcon />}
       </IconButton>
       <IconButton onClick={handleSend}>
         <SendIcon />
