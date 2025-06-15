@@ -40,7 +40,10 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ username }) => {
   };
 
   useEffect(() => {
-    if (!username) return;
+    if (!username) {
+      setMessages([]);
+      return;
+    }
     handleGetHistory();
   }, [username]);
 
